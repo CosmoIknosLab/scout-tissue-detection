@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCOUT · Tissue Detection</title>
+<meta name="description" content="SCOUT: risk-guided foundation-model escalation for robust tissue detection in whole-slide images. pip install scout-tissue.">
+<meta property="og:title" content="SCOUT: Risk-Guided Foundation-Model Escalation for Robust Tissue Detection in Whole-Slide Images">
+<meta property="og:description" content="A small audit network decides where a frozen pathology foundation model is worth running. Halves the failures of the best released tissue detector.">
+<meta property="og:image" content="https://raw.githubusercontent.com/CosmoIknosLab/scout-tissue-detection/main/assets/overview.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --bg-soft:#f5f7fb; --card:#ffffff; --ink:#14181f; --ink-2:#4a5260; --ink-3:#7a8291;
+  --line:#e3e7ee; --accent:#2a78d6; --accent-ink:#ffffff; --accent-soft:#e8f1fc; --warm:#eb6834; --violet:#7b61c4;
+  --code-bg:#0f1720; --code-ink:#e6edf3; --shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px rgba(16,24,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1117; --bg-soft:#121821; --card:#151c26; --ink:#e8edf4; --ink-2:#b4bdca; --ink-3:#8590a0;
+    --line:#252f3d; --accent:#5aa2f0; --accent-ink:#0d1117; --accent-soft:#16263a; --warm:#f0875c; --violet:#a08ce0;
+    --code-bg:#0a0e14; --code-ink:#e6edf3; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1117; --bg-soft:#121821; --card:#151c26; --ink:#e8edf4; --ink-2:#b4bdca; --ink-3:#8590a0;
+  --line:#252f3d; --accent:#5aa2f0; --accent-ink:#0d1117; --accent-soft:#16263a; --warm:#f0875c; --violet:#a08ce0;
+  --code-bg:#0a0e14; --code-ink:#e6edf3; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header.hero{padding:72px 0 40px;text-align:center;background:radial-gradient(1200px 400px at 50% -100px,var(--accent-soft),transparent 70%)}
+.eyebrow{display:inline-block;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:4px 12px;border-radius:999px;margin-bottom:20px}
+h1{font-size:clamp(30px,5vw,48px);line-height:1.12;letter-spacing:-.02em;margin:0 auto 18px;max-width:900px;font-weight:800}
+h1 .brand{color:var(--accent)}
+.authors{font-size:18px;color:var(--ink);margin:0}
+.affil{font-size:15px;color:var(--ink-3);margin:4px 0 0}
+.venue{font-size:14px;color:var(--ink-3);margin:6px 0 28px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600;font-size:15px;box-shadow:var(--shadow)}
+.btn:hover{text-decoration:none;border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.07);color:var(--accent-ink)}
+.btn svg{width:18px;height:18px;flex:none}
+.pip{margin:26px auto 0;display:inline-flex;align-items:center;gap:10px;background:var(--code-bg);color:var(--code-ink);font-family:"JetBrains Mono",ui-monospace,monospace;font-size:15px;padding:10px 12px 10px 18px;border-radius:12px;max-width:100%}
+.pip button{background:transparent;border:1px solid #33404f;color:var(--code-ink);border-radius:8px;padding:4px 10px;font:inherit;font-size:13px;cursor:pointer}
+.pip button:hover{border-color:var(--accent)}
+figure{margin:0}
+.teaser{margin:40px auto 0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
+.teaser img,.fig img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--ink-3);margin-top:10px;text-align:left}
+section{padding:56px 0;border-top:1px solid var(--line)}
+section.soft{background:var(--bg-soft)}
+h2{font-size:28px;letter-spacing:-.01em;margin:0 0 18px;font-weight:700}
+h3{font-size:19px;margin:0 0 6px;font-weight:600}
+p{margin:0 0 14px;color:var(--ink-2)}
+p.lead{font-size:18px;color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.stat .num{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.1;color:var(--ink)}
+.stat .num small{font-size:16px;font-weight:600;color:var(--ink-3);margin-left:4px}
+.stat .lbl{font-size:14px;color:var(--ink-2);margin-top:8px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;position:relative}
+.step::before{counter-increment:s;content:counter(s);display:inline-flex;width:28px;height:28px;border-radius:50%;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--accent-ink);background:var(--accent);margin-bottom:10px}
+.step:nth-child(3)::before{background:var(--warm)} .step:nth-child(4)::before{background:var(--violet)}
+.step p{font-size:15px;margin:0}
+.fig{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:22px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:15px;margin-top:6px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.ours td{font-weight:600;color:var(--ink)} tr.ours td:first-child{border-left:3px solid var(--accent)}
+.tablecard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 6px 2px;overflow-x:auto;box-shadow:var(--shadow)}
+.note{font-size:14px;color:var(--ink-3);margin-top:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+pre{background:var(--code-bg);color:var(--code-ink);border-radius:12px;padding:16px 18px;overflow-x:auto;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:14px;line-height:1.55;margin:0}
+pre .c{color:#7f8c9c} pre .k{color:#ff9b73} pre .s{color:#9fd3a0}
+.codehead{font-size:13px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px}
+.bib{position:relative}
+.bib button{position:absolute;top:10px;right:10px;background:transparent;border:1px solid #33404f;color:var(--code-ink);border-radius:8px;padding:4px 10px;font:inherit;font-size:13px;cursor:pointer}
+footer{padding:36px 0 48px;border-top:1px solid var(--line);color:var(--ink-3);font-size:14px;text-align:center}
+.theme{position:fixed;top:14px;right:14px;z-index:5;background:var(--card);border:1px solid var(--line);color:var(--ink-2);border-radius:999px;width:38px;height:38px;cursor:pointer;box-shadow:var(--shadow);font-size:16px}
+@media (max-width:860px){.stats,.steps{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+@media (max-width:520px){.stats,.steps{grid-template-columns:1fr} body{font-size:16px} header.hero{padding-top:56px}}
+</style>
+</head>
+<body>
+<button class="theme" id="theme" aria-label="Toggle dark mode" title="Toggle dark mode">◐</button>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Computational pathology · Open source</span>
+    <h1><span class="brand">SCOUT</span>: Risk-Guided Foundation-Model Escalation for Robust Tissue Detection in Whole-Slide Images</h1>
+    <p class="authors">Cristian Tommasino &nbsp;·&nbsp; Antonio M. Rinaldi</p>
+    <p class="affil">Department of Electrical Engineering and Information Technology (DIETI), University of Naples Federico II</p>
+    <p class="venue">Preprint, under review</p>
+    <div class="btns">
+      <a class="btn primary" href="https://github.com/CosmoIknosLab/scout-tissue-detection"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
+      <a class="btn" href="https://pypi.org/project/scout-tissue/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7l8.7 5 8.7-5M12 22V12"/></svg>PyPI</a>
+      <a class="btn" href="https://huggingface.co/Cristiandieti/scout-tissue-detection"><span aria-hidden="true">🤗</span>Weights</a>
+      <a class="btn" href="https://doi.org/10.5281/zenodo.23664072"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>Zenodo</a>
+      <a class="btn" href="#citation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 11H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v6c0 2-1 3-3 4M19 11h-4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v6c0 2-1 3-3 4"/></svg>Cite</a>
+    </div>
+    <div class="pip"><span>$ pip install scout-tissue</span><button type="button" data-copy="pip install scout-tissue">Copy</button></div>
+
+    <figure class="teaser">
+      <img src="assets/overview.png" alt="SCOUT pipeline: an initial thumbnail mask, an audit head that predicts its errors, the highest-risk half of the candidate windows sent to a frozen foundation model, and consensus fusion into the final tissue mask with a review flag" width="2089" height="586">
+      <figcaption>SCOUT on an immunohistochemistry (Ki67) slide. An optical-density threshold misses the pale tissue; the audit head ranks the windows by the risk of an error, the highest-risk half is re-read at 2&nbsp;µm/px by a frozen foundation model, and consensus fusion writes the decision back into the mask.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>Why tissue detection is not solved</h2>
+    <p class="lead">Tissue detection is the first step of almost every whole-slide image pipeline, and it is usually treated as solved: released detectors reach a high mean overlap with manual masks. But a high mean Dice can coexist with a missed needle-biopsy fragment or a whole pale immunohistochemistry section left out, and those errors pass silently into every downstream model.</p>
+    <p>We measure detectors by how often a mask is wrong enough to need correction, on a public benchmark with manual masks from many sources and stains. Five released detectors fail on 38–95&nbsp;% of the test case groups even after their post-processing is re-tuned on the benchmark, mostly by missing pale and immunohistochemistry tissue. SCOUT corrects these errors by running a pathology foundation model only where a cheap detector is likely to be wrong.</p>
+    <div class="stats" role="list">
+      <div class="stat" role="listitem"><div class="num">18.6<small>%</small></div><div class="lbl">test case groups needing correction, against 38.1&nbsp;% for the best released detector</div></div>
+      <div class="stat" role="listitem"><div class="num">22.0<small>%</small></div><div class="lbl">on immunohistochemistry, where released detectors fail on 56–100&nbsp;%</div></div>
+      <div class="stat" role="listitem"><div class="num">28.0<small>%</small></div><div class="lbl">on sources held out of training, against 38.3&nbsp;% for a U-Net trained on the same masks</div></div>
+      <div class="stat" role="listitem"><div class="num">½</div><div class="lbl">of the candidate windows reach the foundation model, with no loss against sending all of them</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="soft">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step"><h3>Initial tier</h3><p>An optical-density threshold with morphology gives a mask of the whole slide at 8&nbsp;µm/px in seconds.</p></div>
+      <div class="step"><h3>Audit</h3><p>A 1.4&nbsp;M-parameter U-Net predicts, pixel by pixel, where that mask misses tissue or includes background.</p></div>
+      <div class="step"><h3>Foundation model</h3><p>The highest-risk half of the 448&nbsp;µm windows near tissue is re-read at 2&nbsp;µm/px and segmented by a frozen foundation model with a light decoder.</p></div>
+      <div class="step"><h3>Consensus and review</h3><p>New tissue is added only where the foundation model is confident, so glass and debris stay out. A calibrated score flags slides for review.</p></div>
+    </div>
+    <p class="note">The review flag is calibrated with Learn-then-Test to bound the rate of unflagged failures; it is calibrated for the Virchow2 variant of the paper and is not part of the released package.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Results</h2>
+    <p>Tissues with Issues test set: 113 case groups, 153 slides. A case group fails when the mask of one of its slides would need manual correction (more than 2&nbsp;% of the tissue missed, a fragment of at least 0.1&nbsp;mm² less than half detected, false tissue above 10&nbsp;% of the tissue area, or precision below 0.9). Released detectors are evaluated after their post-processing is re-tuned on the development set.</p>
+    <div class="tablecard">
+      <table>
+        <thead><tr><th>Method</th><th class="n">Case groups failed</th><th class="n">IHC case groups failed</th></tr></thead>
+        <tbody>
+          <tr class="ours"><td>SCOUT (Virchow2, paper)</td><td class="n">18.6 %</td><td class="n">22.0 %</td></tr>
+          <tr class="ours"><td>SCOUT-open (H-optimus-0, released)</td><td class="n">19.5 %</td><td class="n">–</td></tr>
+          <tr><td>AtlasPatch</td><td class="n">38.1 %</td><td class="n">60.0 %</td></tr>
+          <tr><td>HEST</td><td class="n">47.8 %</td><td class="n">56.0 %</td></tr>
+          <tr><td>nnU-Net (Helgesen et al.)</td><td class="n">50.4 %</td><td class="n">76.0 %</td></tr>
+          <tr><td>GrandQC</td><td class="n">53.1 %</td><td class="n">100.0 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figure class="fig">
+      <img src="assets/results.png" alt="Left: failure rate against the share of candidate windows sent to the foundation model, for the audit-risk, boundary and random gates; SCOUT reaches 18.6 percent at half the windows. Right: failure rates with each source seen in training and held out; SCOUT rises from about 19 to 28 percent, the U-Net and the cascade without the foundation model to 38 percent." width="1502" height="813" loading="lazy">
+      <figcaption>(a) Where the foundation model is spent matters more than how much: windows chosen by the audit risk cut failures far more than random ones, and sending every window brings no further gain. (b) With each source held out of training, SCOUT degrades much less than a U-Net trained on the same masks or the same cascade without the foundation model.</figcaption>
+    </figure>
+    <figure class="fig">
+      <img src="assets/qualitative.jpg" alt="Masks of SCOUT and the released detectors on H&E, immunohistochemistry and special-stain test slides; hatching marks missed and false tissue" width="1464" height="1218" loading="lazy">
+      <figcaption>Test slides chosen by a prespecified rule for each stain family: the slide at the median SCOUT Dice and the slide with the largest gain over the best comparator. Hatching marks missed (/) and false (\) tissue.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="soft" id="usage">
+  <div class="wrap">
+    <h2>Use it</h2>
+    <p>The <code>scout-tissue</code> package runs SCOUT-open, built on the Apache-licensed H-optimus-0 (accept its terms on Hugging Face first). The weights download automatically. Masks come out on the slide's level-0 frame as NumPy, PNG or GeoJSON that QuPath imports directly.</p>
+    <div class="grid2">
+      <div>
+        <p class="codehead">Command line</p>
+<pre><span class="c"># one or many slides; models load once</span>
+pip install scout-tissue
+scout-tissue predict slide.svs --out masks/ \
+    --format npz,png,geojson
+
+<span class="c"># browser demo</span>
+pip install "scout-tissue[demo]"
+scout-tissue demo --port 7860</pre>
+      </div>
+      <div>
+        <p class="codehead">Python</p>
+<pre><span class="k">from</span> scout_tissue <span class="k">import</span> Scout
+
+scout = Scout.from_pretrained(device=<span class="s">"cuda"</span>)
+res = scout.predict(<span class="s">"slide.svs"</span>)
+
+res.mask             <span class="c"># bool [H, W] at 8 µm/px</span>
+res.tissue_area_mm2
+res.to_geojson()     <span class="c"># level-0 polygons</span>
+res.save(<span class="s">"masks/"</span>, (<span class="s">"npz"</span>, <span class="s">"geojson"</span>))</pre>
+      </div>
+    </div>
+    <p class="note">About 6–89 s per slide on an NVIDIA RTX 5000 Ada (median ~41 s), with ~6 GB of GPU memory. Code Apache-2.0; SCOUT weights CC BY-NC 4.0; research use only.</p>
+  </div>
+</section>
+
+<section id="citation">
+  <div class="wrap">
+    <h2>Citation</h2>
+    <div class="bib">
+<pre id="bibtex">@misc{tommasino2026scout,
+  title  = {{SCOUT}: Risk-Guided Foundation-Model Escalation for Robust
+            Tissue Detection in Whole-Slide Images},
+  author = {Tommasino, Cristian and Rinaldi, Antonio M.},
+  year   = {2026},
+  note   = {Preprint, under review}
+}</pre>
+      <button type="button" data-copy-target="bibtex">Copy</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">SCOUT · Department of Electrical Engineering and Information Technology (DIETI), University of Naples Federico II</div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('theme'), key='scout-theme';
+  try{var t=localStorage.getItem(key); if(t) root.setAttribute('data-theme',t);}catch(e){}
+  btn.addEventListener('click',function(){
+    var dark=root.getAttribute('data-theme')==='dark' || (!root.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+    var next=dark?'light':'dark'; root.setAttribute('data-theme',next);
+    try{localStorage.setItem(key,next);}catch(e){}
+  });
+  function copy(text,b){
+    (navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).then(function(){var o=b.textContent;b.textContent='Copied';setTimeout(function(){b.textContent=o},1400);},function(){});
+  }
+  document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){copy(b.getAttribute('data-copy'),b);});});
+  document.querySelectorAll('[data-copy-target]').forEach(function(b){b.addEventListener('click',function(){copy(document.getElementById(b.getAttribute('data-copy-target')).textContent,b);});});
+})();
+</script>
+</body>
+</html>
