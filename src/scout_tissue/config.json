@@ -1,0 +1,82 @@
+{
+  "name": "SCOUT-open",
+  "version": "1.4",
+  "mpp": 8.0,
+  "padding": {
+    "max_per_channel": 10,
+    "min_area_mm2": 1.0
+  },
+  "base": {
+    "channel": "od_sum",
+    "threshold": 0.06,
+    "blur_sigma_um": 0.0,
+    "close_radius_um": 32.0,
+    "open_radius_um": 0.0,
+    "min_object_mm2": 0.0,
+    "hole_fill_mm": 1.0
+  },
+  "harmonization": {
+    "hole_max_mm": 0.25,
+    "size": "feret"
+  },
+  "audit": {
+    "encoder": "tu-mobilenetv3_small_100",
+    "decoder_channels": [
+      64,
+      48,
+      32,
+      24,
+      16
+    ],
+    "in_channels": 10,
+    "classes": 2,
+    "dist_clip_mm": 0.5,
+    "od_floor": 0.05,
+    "infer_tile_px": 1024,
+    "infer_margin_px": 64
+  },
+  "candidates": {
+    "near_mm": 0.5
+  },
+  "gate": "risk",
+  "budget": "f0.5",
+  "window": {
+    "px_metric": 56,
+    "mpp_metric": 8.0,
+    "mpp_input": 2.0,
+    "input_px": 224
+  },
+  "fm": {
+    "model": "hoptimus0",
+    "repo": "bioptimus/H-optimus-0",
+    "timm_kwargs": {
+      "init_values": 1e-05,
+      "dynamic_img_size": false
+    },
+    "mean": [
+      0.707223,
+      0.578729,
+      0.703617
+    ],
+    "std": [
+      0.211883,
+      0.230117,
+      0.177517
+    ],
+    "batch": 64
+  },
+  "fusion_cut": 0.5,
+  "min_component_mm2": 0.01,
+  "weights": {
+    "repo_id": "Cristiandieti/scout-tissue-detection",
+    "revision": "a9ea65d39ba6169be9294c88756a3c23a80e6608",
+    "audit": {
+      "filename": "audit/final.pt",
+      "sha256": "a5db7d96f49a385aba2d66d8538b833cd796a3581f1ee8d01b77f3c71d3eaf2e"
+    },
+    "fm_head": {
+      "filename": "fmheads_hoptimus0/final.pt",
+      "sha256": "25ce735f481ed430199a0c480a435b757e6cd0904b1671bcff4981e8a1c068a8"
+    }
+  }
+}

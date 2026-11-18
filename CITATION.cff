@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+type: software
+title: "scout-tissue: SCOUT-open tissue detection for whole-slide images"
+version: 1.0.0
+license: Apache-2.0
+authors:
+  - family-names: Tommasino
+    given-names: Cristian
+    affiliation: "University of Naples Federico II"
+  - family-names: Rinaldi
+    given-names: Antonio M.
+    affiliation: "University of Naples Federico II"
+repository-code: "https://github.com/CosmoIknosLab/scout-tissue-detection"
+url: "https://huggingface.co/Cristiandieti/scout-tissue-detection"
+preferred-citation:
+  type: article
+  title: "SCOUT: Risk-Guided Foundation-Model Escalation for Robust Tissue Detection in Whole-Slide Images"
+  authors:
+    - family-names: Tommasino
+      given-names: Cristian
+      affiliation: "University of Naples Federico II"
+    - family-names: Rinaldi
+      given-names: Antonio M.
+      affiliation: "University of Naples Federico II"
+  status: preprint
