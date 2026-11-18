@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite the paper below."
 type: software
 title: "scout-tissue: SCOUT-open tissue detection for whole-slide images"
-version: 1.0.0
+version: 1.0.1
 license: Apache-2.0
 authors:
   - family-names: Tommasino

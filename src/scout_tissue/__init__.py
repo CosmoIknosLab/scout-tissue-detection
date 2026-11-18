@@ -11,6 +11,6 @@ from scout_tissue.export import load_npz, to_geojson
 from scout_tissue.grid import Grid
 from scout_tissue.pipeline import Scout, ScoutResult
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 __all__ = ["Grid", "Scout", "ScoutResult", "__version__", "load_config", "load_npz", "to_geojson"]
