@@ -65,7 +65,9 @@ The slide's level-0 MPP must be in its metadata; slides without a usable MPP are
 
 ## Hardware
 
-A GPU is strongly recommended: about 30–60 s per slide on an RTX 3090, depending on the amount of tissue (window reads at 2 µm/px use one process per CPU core). The CPU path works but the foundation model then takes minutes per slide. GPU memory: ~6 GB.
+A GPU is strongly recommended; the time is dominated by H-optimus-0 on the escalated windows, so it grows with the amount of tissue. Measured on 18 slides (biopsies to large resections) with an NVIDIA RTX 5000 Ada and 8 CPU cores: 6–89 s per slide (median ~41 s) after a one-off model load of ~15 s, peak GPU memory ~6 GB. On CPU only (16 cores) a small biopsy slide took ~5 min and ~10 GB of RAM. Window reads at 2 µm/px use one process per CPU core (`--readers`).
+
+Masks are deterministic for a given device and software stack. GPU and CPU runs can differ in a few boundary pixels (26 pixels, Dice 0.99997, on one test slide).
 
 ## Performance
 
