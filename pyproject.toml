@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scout-tissue"
-version = "1.0.1"
+version = "1.0.2"
 description = "SCOUT-open: risk-guided foundation-model escalation for tissue detection in whole-slide images"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -46,6 +46,8 @@ scout-tissue = "scout_tissue.cli:main"
 [project.urls]
 Homepage = "https://github.com/CosmoIknosLab/scout-tissue-detection"
 Weights = "https://huggingface.co/Cristiandieti/scout-tissue-detection"
+Paper = "https://arxiv.org/abs/2611.24366"
+"Project page" = "https://cosmoiknoslab.github.io/scout-tissue-detection/"
 
 [tool.setuptools.packages.find]
 where = ["src"]

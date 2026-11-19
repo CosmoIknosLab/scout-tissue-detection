@@ -4,13 +4,14 @@
 
 **Robust tissue detection for whole-slide images, with a foundation model spent only where it matters**
 
+[![arXiv](https://img.shields.io/badge/arXiv-2611.24366-b31b1b)](https://arxiv.org/abs/2611.24366)
 [![PyPI](https://img.shields.io/pypi/v/scout-tissue?color=2A78D6)](https://pypi.org/project/scout-tissue/)
 [![Python](https://img.shields.io/pypi/pyversions/scout-tissue)](https://pypi.org/project/scout-tissue/)
 [![License](https://img.shields.io/badge/code-Apache--2.0-blue)](https://github.com/CosmoIknosLab/scout-tissue-detection/blob/main/LICENSE)
 [![Weights](https://img.shields.io/badge/%F0%9F%A4%97%20weights-Hugging%20Face-yellow)](https://huggingface.co/Cristiandieti/scout-tissue-detection)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23664072.svg)](https://doi.org/10.5281/zenodo.23664072)
 
-[Project page](https://cosmoiknoslab.github.io/scout-tissue-detection/) · [Install](#install) · [Quick start](#quick-start) · [Results](#results) · [Citation](#citation)
+[Paper](https://arxiv.org/abs/2611.24366) · [Project page](https://cosmoiknoslab.github.io/scout-tissue-detection/) · [Install](#install) · [Quick start](#quick-start) · [Results](#results) · [Citation](#citation)
 
 <img src="https://raw.githubusercontent.com/CosmoIknosLab/scout-tissue-detection/main/assets/overview.png" alt="SCOUT pipeline: initial thumbnail mask, audit head, highest-risk windows sent to a frozen foundation model, consensus fusion" width="100%">
 
@@ -133,10 +134,13 @@ Research use only; not for clinical decisions.
 
 ```bibtex
 @misc{tommasino2026scout,
-  title  = {{SCOUT}: Risk-Guided Foundation-Model Escalation for Robust Tissue Detection in Whole-Slide Images},
-  author = {Tommasino, Cristian and Rinaldi, Antonio M.},
-  year   = {2026},
-  note   = {Preprint, under review}
+  title         = {{SCOUT}: Risk-Guided Foundation-Model Escalation for Robust Tissue Detection in Whole-Slide Images},
+  author        = {Tommasino, Cristian and Rinaldi, Antonio M.},
+  year          = {2026},
+  eprint        = {2611.24366},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2611.24366}
 }
 ```
 
